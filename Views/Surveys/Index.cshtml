@@ -1,0 +1,49 @@
+@model IEnumerable<SurveyApp.Models.Survey>
+
+@{
+    ViewData["Title"] = "Survey List";
+}
+
+<h1>Survey List</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Survey</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Feedback Type</th>
+            <th>Document Path</th>
+            <th>Additional Comments</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var survey in Model)
+        {
+            <tr>
+                <td>@survey.Id</td>
+                <td>@survey.Name</td>
+                <td>@survey.Email</td>
+                <td>@survey.Age</td>
+                <td>@survey.FeedbackType</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(survey.DocumentPath))
+                    {
+                        <a href="~/uploads/@survey.DocumentPath" target="_blank">View Document</a>
+                    }
+                </td>
+                <td>@survey.AdditionalComments</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@survey.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@survey.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

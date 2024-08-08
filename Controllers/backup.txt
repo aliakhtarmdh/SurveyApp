@@ -1,0 +1,67 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SurveyApp.Models;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+
+namespace SurveyApp.Controllers
+{
+    public class SurveysController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly string _uploadFolderPath;
+
+        public SurveysController(ApplicationDbContext context)
+        {
+            _context = context;
+            _uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            if (!Directory.Exists(_uploadFolderPath))
+            {
+                Directory.CreateDirectory(_uploadFolderPath);
+            }
+        }
+
+        // GET: Surveys/Create
+        public IActionResult Create()
+        {
+            ViewBag.FeedbackTypes = new List<string> { "Positive", "Neutral", "Negative" };
+            ViewBag.Services = new List<string> { "Service 1", "Service 2", "Service 3" };
+            return View();
+        }
+
+        // POST: Surveys/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Survey survey, IFormFile documentPath, List<string> servicesUsed)
+        {
+            if (ModelState.IsValid)
+            {
+                if (documentPath != null && documentPath.Length > 0)
+                {
+                    var fileName = Path.GetFileName(documentPath.FileName);
+                    var filePath = Path.Combine(_uploadFolderPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await documentPath.CopyToAsync(stream);
+                    }
+
+                    survey.DocumentPath = fileName;
+                }
+
+                survey.ServicesUsed = servicesUsed; // Set the selected services
+
+                _context.Add(survey);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.FeedbackTypes = new List<string> { "Positive", "Neutral", "Negative" };
+            ViewBag.Services = new List<string> { "Service 1", "Service 2", "Service 3" };
+            return View(survey);
+        }
+    }
+}

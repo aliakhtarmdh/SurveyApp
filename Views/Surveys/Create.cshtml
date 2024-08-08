@@ -1,0 +1,64 @@
+@model SurveyApp.Models.Survey
+
+@{
+    ViewData["Title"] = "Create Survey";
+}
+
+<h1>Create Survey</h1>
+
+<form asp-action="Create" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Age" class="control-label"></label>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FeedbackType" class="control-label"></label>
+        <select asp-for="FeedbackType" asp-items="ViewBag.FeedbackTypes" class="form-control"></select>
+        <span asp-validation-for="FeedbackType" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DocumentPath" class="control-label"></label>
+        <input asp-for="DocumentPath" type="file" class="form-control" />
+        <span asp-validation-for="DocumentPath" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Services Used</label>
+        @foreach (var service in ViewBag.Services as IEnumerable<SelectListItem>)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="ServicesUsed" value="@service.Value" />
+                <label class="form-check-label">
+                    @service.Text
+                </label>
+            </div>
+        }
+    </div>
+
+    
+
+    <div class="form-group">
+        <label asp-for="AdditionalComments" class="control-label"></label>
+        <textarea asp-for="AdditionalComments" class="form-control"></textarea>
+        <span asp-validation-for="AdditionalComments" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
